@@ -17,9 +17,12 @@
 
 #### 什麽是資源站數據接口？
 
-當前程序是完全基於目前互聯網第三方的資源站的Json數據接口進行獲取内容並構造到kodi中的，那麽什麽是接口呢，又如何尋找它？
+> 當前程序是完全基於目前互聯網第三方的資源站的Json數據接口進行獲取内容並構造到kodi中的，那麽什麽是接口呢，又如何尋找它？
 
-> 請您Google下面这些关键词，并寻找这些第三方站点中的json api接口。資源站json接口通常非常类似：例如“https://api.123.com/api.php/provide/vod/?ac=list”，則接口就是 “https://api.123.com/api.php/provide/vod/”
+請您Google下面这些关键词，并寻找这些第三方站点中的json api接口。資源站json接口通常非常类似，
+例如我们找到了他们的json接口是这样举例的：https://api.123.com/api.php/provide/vod/?ac=list
+那么其实它的接口就是：https://api.123.com/api.php/provide/vod/
+
 其中问好后面的都是参数，例如?ac=list是一个参数。
 
 ```
