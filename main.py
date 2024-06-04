@@ -108,13 +108,15 @@ def Web_load_detail_one(_api_url, detail_id):
                 v_infos = {}
                 try:
                     v_infos['title'] = video['vod_name']
-                    v_infos['originaltitle'] = video['vod_name']
+                    v_infos['originaltitle'] = video['vod_sub']
+                    v_infos['sorttitle'] = video['vod_en']
                     v_infos['tag'] = video['vod_remarks']
-                    v_infos['status'] = 'n/a'
                     v_infos['country'] = video['vod_area']
                     v_infos['year'] = video['vod_year']
                     v_infos['director'] = video['vod_director']
+                    v_infos['writer'] = video['vod_writer'].split(",")
                     v_infos['cast'] = video['vod_actor'].split(',')
+                    v_infos['plotoutline'] = video['vod_blurb']
                     v_infos['plot'] = video['vod_content']
                     v_infos['rating'] = float(video['vod_score'])
                 except IndexError as e:
@@ -233,10 +235,10 @@ def Web_load_channels(_api_url):
         print('duola_debug:无法解析json')
         _plugin_dialog.notification(heading=_plugin_name, message='抱歉，无法解析返回的数据，服务暂时不可用，请稍后重试', time=3000)
 
-# request: https://123.com/api/provide/vod/?ac=list&t={type_id}&pg={page}
+# request: https://123.com/api/provide/vod/?ac=videolist&t={type_id}&pg={page}
 # return: list list
 def Web_load_list(_api_url, type_id, page):
-    get_url = _api_url + '?ac=list&t=' + type_id + '&pg=' + page
+    get_url = _api_url + '?ac=videolist&t=' + type_id + '&pg=' + page
     print('dlt', get_url)
     try:
         res = requests.get(url=get_url,headers=UA_head)
@@ -254,10 +256,27 @@ def Web_load_list(_api_url, type_id, page):
                     vod_name = video['vod_name']
                     vod_remarks = video['vod_remarks']
                     vod_typename = video['type_name']
+                    vod_pic = video['vod_pic']
+                    v_infos = {}
+                    try:
+                        v_infos['title'] = video['vod_name']
+                        v_infos['originaltitle'] = video['vod_sub']
+                        v_infos['sorttitle'] = video['vod_en']
+                        v_infos['tag'] = video['vod_remarks']
+                        v_infos['country'] = video['vod_area']
+                        v_infos['year'] = video['vod_year']
+                        v_infos['director'] = video['vod_director']
+                        v_infos['writer'] = video['vod_writer'].split(",")
+                        v_infos['cast'] = video['vod_actor'].split(',')
+                        v_infos['plotoutline'] = video['vod_blurb']
+                        v_infos['plot'] = video['vod_content']
+                        v_infos['rating'] = float(video['vod_score'])
+                    except IndexError as e:
+                        pass
                     # 建立kodi菜单
                     list_item = xbmcgui.ListItem(vod_name+' ('+ vod_typename+' / '+vod_remarks+')')
-                    # list_item.setArt({'icon': '123.JPG'})
-                    # list_item.setInfo('video', {'year': vod['year'], 'title':vod['name'], 'episodeguide': play['name'], 'tracknumber': i})
+                    list_item.setArt({'poster': vod_pic})
+                    list_item.setInfo('video', v_infos)
                     a_url = urllib.parse.quote(_api_url)
                     xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_search_return=' + a_url + '&read_detail=' + vod_id, list_item, True)
                 # 退出kodi菜单布局
