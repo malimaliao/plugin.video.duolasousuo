@@ -55,8 +55,8 @@ def Web_load_search(_api_url, keyword):
         res_text = ''
         _plugin_dialog.notification(heading=_plugin_name, message='搜索获取失败，暂不可用', time=3000)
         print('duola_debug: Web_load_search => bad', e)
-    if check_json(res.text):
-        res_json = json.loads(res.text)
+    if check_json(res_text):
+        res_json = json.loads(res_text)
         if res_json['code'] == 1:
             if len(res_json['list']) > 0:
                 for video in res_json['list']:
@@ -94,8 +94,8 @@ def Web_load_detail_one(_api_url, detail_id):
         res_text = ''
         _plugin_dialog.notification(heading=_plugin_name, message='内容获取失败，暂不可用', time=3000)
         print('duola_debug: Web_load_detail_one => bad', e)
-    if check_json(res.text):
-        res_json = json.loads(res.text)
+    if check_json(res_text):
+        res_json = json.loads(res_text)
         if res_json['code'] == 1:
             if len(res_json['list']) > 0:
                 video = res_json['list'][0] # 仅提取一个
@@ -207,8 +207,8 @@ def Web_load_channels(_api_url):
         res_text = ''
         _plugin_dialog.notification(heading=_plugin_name, message='栏目获取失败，暂不可用', time=3000)
         print('duola_debug: Web_load_channels => bad', e)
-    if check_json(res.text):
-        res_json = json.loads(res.text)
+    if check_json(res_text):
+        res_json = json.loads(res_text)
         if res_json['code'] == 1:
             if len(res_json['class']) > 0:
                 for channel in res_json['class']:
@@ -247,8 +247,8 @@ def Web_load_list(_api_url, type_id, page):
         res_text = ''
         _plugin_dialog.notification(heading=_plugin_name, message='列表获取失败，暂不可用', time=3000)
         print('duola_debug: Web_load_list => bad', e)
-    if check_json(res.text):
-        res_json = json.loads(res.text)
+    if check_json(res_text):
+        res_json = json.loads(res_text)
         if res_json['code'] == 1:
             if len(res_json['list']) > 0:
                 for video in res_json['list']:
