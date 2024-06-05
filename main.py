@@ -186,6 +186,7 @@ def Web_load_detail_one(_api_url, detail_id):
                         # _plugin_dialog.info(list_item)  # 弹出视频
                         xbmc.Player().play(item=V_m3u8_list[select_i], listitem=list_item)
                         _plugin_dialog.notification(heading=_plugin_name, message='视频即将播放，请耐心稍候一会', time=6000, sound=False)
+                    xbmcplugin.endOfDirectory(handle=_plugin_handle, succeeded=True, updateListing=False, cacheToDisc=True)
                 # player_style -------------------------------------------------
                 if _plugin_player_style == 2:
                     dialog = xbmcgui.Dialog()
@@ -197,6 +198,7 @@ def Web_load_detail_one(_api_url, detail_id):
                         list_item.setInfo('video', v_infos)
                         xbmc.Player().play(item=playlist, listitem=list_item, windowed=False, startpos=select_i)
                         _plugin_dialog.notification(heading=_plugin_name, message='视频即将播放，请耐心稍候一会', time=6000, sound=False)
+                        xbmcplugin.endOfDirectory(handle=_plugin_handle, succeeded=True, updateListing=False, cacheToDisc=True)
             else:
                 print('duola_debug:没有数据')
                 _plugin_dialog.notification(heading=_plugin_name, message='抱歉，找不到播放列表', time=3000)
