@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.duolasousuo" name="哆啦搜索" version="1.6.1" provider-name="malimaliao">
+<addon id="plugin.video.duolasousuo" name="哆啦搜索" version="1.7.0" provider-name="malimaliao">
 	<requires>
 		<import addon="script.module.requests" version="2.12.4"/>
 	</requires>
@@ -8,14 +8,14 @@
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
-		<summary>duola video search plugin</summary>
+		<summary>Duola video search plugin</summary>
 		<summary lang="zh">哆啦搜索</summary>
-		<description>This plugin for Kodi v19 and above,form third-party website video resource, and its resource has nothing to do with the author of this plugin.</description>
-		<description lang="zh">哆啦搜索是免费的视频搜索插件，通过Kodi开放的计算平台，并基于Python爬虫自动拓扑第三方网站的数据并汇集成一个简单的影音库。</description>
+		<description> duolasousuo is a free video search plugin that references data from third-party websites through Kodi computing platform and aggregates it into a simple video library for research and learning purposes only. </description>
+		<description lang="zh">哆啦搜索是免费的视频搜索插件，通过Kodi计算平台引用第三方网站的数据，并汇集成一个简单的影音库，仅适用于研究和学习目的。</description>
 		<website>https://github.com/malimaliao</website>
 		<email>malimaliao@gmail.com</email>
-		<disclaimer>All resources are irrelevant to the author! For your reference and study only. Please download and delete. Email: malimaliao@gmail.com</disclaimer>
-		<disclaimer lang="zh">本插件是一个Kodi练习测试应用，基于python拓扑了第三方的引用内容，所有资源均与作者无关！仅供阁下参考和学习。请下载学习后删除。投诉或者反馈联系方式：malimaliao@gmail.com</disclaimer>
+		<disclaimer>This plug-in is based on the purpose of learning and research through crawler technology to grab all content from third-party website data, plug-in does not involve resource storage or distribution. The author assumes no responsibility for its content! For personal study only. Please unload it within 24 hours. Do not use it for commercial purposes.</disclaimer>
+		<disclaimer lang="zh">本插件是基于学习和研究目的通过爬虫技术所抓取的所有内容均来自于第三方网站的数据，插件不涉及资源存储或分发。作者不对其内容承担任何责任！仅供个人学习交流之用，24小时内请自觉卸载，勿作商业用途。</disclaimer>
 		<assets>
 			<icon>logo.png</icon>
 			<fanart>resources/hello.jpg</fanart>
