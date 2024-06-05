@@ -7,7 +7,7 @@
 
 ### 如何下载
 
-插件可以從github [releases](releases)選項下載。 請勿嘗試安裝GitHub自動生成的 .zip。
+插件可以從 releases 選項下載。 請勿嘗試安裝GitHub自動生成的 .zip
 
 
 ### 如何更換其他資源站數據接口？
