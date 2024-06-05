@@ -16,6 +16,10 @@ _plugin_address = sys.argv[0]  # 当前插件地址
 _plugin_parm = sys.argv[2]  # 问号以后的内容
 _plugin_dialog = xbmcgui.Dialog()
 _plugin_player_style = int(xbmcplugin.getSetting(_plugin_handle, 'Duola_play_style'))
+# Get addon base path
+ADDON_PATH = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('path'))
+ICONS_DIR = os.path.join(ADDON_PATH, 'resources', 'images', 'icons')
+FANART_DIR = os.path.join(ADDON_PATH, 'resources', 'images', 'fanart')
 # 系统会追加 ?addons=[_plugin_address]
 # 镜像接口：https://raw.githubusercontent.com/malimaliao/kodi/matrix/api/plugin.video.duolasousuo/v1.json
 _plugin_cloud_url = 'https://gitee.com/beijifeng/kodi/raw/matrix/api/plugin.video.duolasousuo/v1.json'
@@ -71,12 +75,12 @@ def Web_load_search(_api_url, keyword):
             if len(res_json['list']) > 0:
                 for video in res_json['list']:
                     vod_id = str(video['vod_id'])
-                    vod_name = '[COLOR yellow]' + video['vod_name'] + '[/COLOR] '
+                    vod_name = video['vod_name']
                     vod_remarks = video['vod_remarks']
-                    vod_typename = video['type_name']
+                    vod_year = str(video['vod_year'])
                     # 建立kodi菜单
-                    list_item = xbmcgui.ListItem(vod_name + ' (' + vod_typename + ' / ' + vod_remarks + ')')
-                    # list_item.setArt({'icon': '123.JPG'})
+                    list_item = xbmcgui.ListItem(vod_name + ' (' + vod_year + ') [COLOR yellow]' + vod_remarks + '[/COLOR]')
+                    list_item.setArt({'icon': os.path.join(ICONS_DIR, 'video.png')})
                     a_url = urllib.parse.quote(_api_url)
                     xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_search_return=' + a_url + '&read_detail=' + vod_id, list_item, True)
                 # 退出kodi菜单布局
@@ -169,8 +173,8 @@ def Web_load_detail_one(_api_url, detail_id):
                     a = -1
                     for x in V_name_list:
                         a = a + 1
-                        list_item = xbmcgui.ListItem('[COLOR yellow]【播放】[/COLOR]' + v_name + ' (' + x + ')')
-                        list_item.setArt({'thumb': v_picture, 'poster': v_picture})
+                        list_item = xbmcgui.ListItem('[COLOR blue]【播放】[/COLOR]' + v_name + ' (' + x + ')')
+                        list_item.setArt({'icon': os.path.join(ICONS_DIR, 'play.png'), 'poster': v_picture})
                         list_item.setInfo('video', v_infos)
                         xbmcplugin.addDirectoryItem(_plugin_handle, V_m3u8_list[a], list_item, False)
                     xbmcplugin.endOfDirectory(handle=_plugin_handle, succeeded=True, updateListing=False, cacheToDisc=True)
@@ -276,6 +280,7 @@ def Web_load_list(_api_url, type_id, page):
                     vod_remarks = video['vod_remarks']
                     vod_typename = video['type_name']
                     vod_pic = video['vod_pic']
+                    vod_year = str(video['vod_year'])
                     v_infos = {}
                     try:
                         v_infos['title'] = video['vod_name']
@@ -293,14 +298,14 @@ def Web_load_list(_api_url, type_id, page):
                     except IndexError as e:
                         pass
                     # 建立kodi菜单
-                    list_item = xbmcgui.ListItem(vod_name + ' (' + vod_typename + ' / ' + vod_remarks + ')')
-                    list_item.setArt({'poster': vod_pic})
+                    list_item = xbmcgui.ListItem(vod_name + ' (' + vod_year + ') [COLOR=blue]' + vod_remarks + '[/COLOR]')
+                    list_item.setArt({'icon': os.path.join(ICONS_DIR, 'video.png'), 'poster': vod_pic})
                     list_item.setInfo('video', v_infos)
                     a_url = urllib.parse.quote(_api_url)
                     xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_search_return=' + a_url + '&read_detail=' + vod_id, list_item, True)
                 # 退出kodi菜单布局
                 page = str(int(page) + 1)
-                list_item = xbmcgui.ListItem('[COLOR yellow]下一页[/COLOR][COLOR blue]【当前第：' + str(res_json['page']) + '页，共计：' + str(res_json['pagecount']) + '页】[/COLOR]')
+                list_item = xbmcgui.ListItem('[COLOR yellow]下一页[/COLOR][COLOR blue]【当前第：' + str(res_json['page']) + '页，共：' + str(res_json['pagecount']) + '页】[/COLOR]')
                 xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_page=' + _api_url + '&channel_id=' + type_id + '&page_id=' + page, list_item, True)
                 xbmcplugin.endOfDirectory(handle=_plugin_handle, succeeded=True, updateListing=False, cacheToDisc=True)
             else:
@@ -384,13 +389,15 @@ def API_get_Cloud_Engine():
                     # print('duola_debug:zy' + zy['name'] + '@' + zy['api_url'])
                     if zy['status'] == 1:
                         _api_url = urllib.parse.quote(base64.b64decode(zy['api_url']))  # base64 解码后，再URL编码
-                        _api_title = ' [COLOR yellow] (' + zy['name'] + ') [/COLOR]'
-                        listitem = xbmcgui.ListItem('哆啦搜索' + _api_title)
-                        xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_engine=' + _api_url, listitem, True)
+                        _api_title = ' [COLOR blue] (' + zy['name'] + ') [/COLOR]'
+                        item_cloud = xbmcgui.ListItem('哆啦搜索' + _api_title)
+                        item_cloud.setArt({'icon': os.path.join(ICONS_DIR, 's2.png')})
+                        xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_engine=' + _api_url, item_cloud, True)
                     else:
-                        _api_title = ' [COLOR blue] (' + zy['name'] + ') ' + ' 暂不可用[/COLOR]'
-                        listitem = xbmcgui.ListItem('哆啦搜索' + _api_title)
-                        xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address, listitem, True)
+                        _api_title = ' [COLOR yellow] (' + zy['name'] + ') ' + ' 暂不可用[/COLOR]'
+                        item_cloud = xbmcgui.ListItem('哆啦搜索' + _api_title)
+                        item_cloud.setArt({'icon': os.path.join(ICONS_DIR, 's0.png')})
+                        xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address, item_cloud, True)
             else:
                 _plugin_dialog.notification(heading=_plugin_name, message='云端搜索引擎暂时故障,请稍后重试' + api['message'], time=3000)
         else:
@@ -432,11 +439,13 @@ if _plugin_parm == '':
     # add local menu
     _local_api_url = xbmcplugin.getSetting(_plugin_handle, 'Duola_Local_Search_Engine')
     _api_url = urllib.parse.quote(_local_api_url)
-    listitem = xbmcgui.ListItem('哆啦搜索' + _b)
-    xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_engine=' + _api_url, listitem, True)
+    item_engine = xbmcgui.ListItem('哆啦搜索' + _b)
+    item_engine.setArt({'icon': os.path.join(ICONS_DIR, 's1.png')})
+    xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_engine=' + _api_url, item_engine, True)
     # add help menu
-    listitem = xbmcgui.ListItem('[COLOR=blue]帮助&声明[/COLOR]')
-    xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_help', listitem, True)
+    item_engine = xbmcgui.ListItem('[COLOR=yellow]帮助&声明[/COLOR]')
+    item_engine.setArt({'icon': os.path.join(ICONS_DIR, 'doc.png')})
+    xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_help', item_engine, True)
     # exit menu build
     xbmcplugin.endOfDirectory(handle=_plugin_handle, succeeded=True, updateListing=False, cacheToDisc=True)
 
@@ -454,8 +463,9 @@ if '?Bot_help' in _plugin_parm:
 if '?Bot_engine=' in _plugin_parm:
     _parm_url = urllib.parse.unquote(_plugin_parm)
     engine_url = _parm_url.split("Bot_engine=")[1]
-    listitem = xbmcgui.ListItem('[COLOR yellow]在线搜索[/COLOR]')
-    xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_search=' + engine_url, listitem, True)
+    item_menu = xbmcgui.ListItem('[COLOR=yellow]在线搜索[/COLOR]')
+    item_menu.setArt({'icon': os.path.join(ICONS_DIR, 'search.png')})
+    xbmcplugin.addDirectoryItem(_plugin_handle, _plugin_address + '?Bot_search=' + engine_url, item_menu, True)
     Web_load_channels(engine_url)
     xbmcplugin.endOfDirectory(handle=_plugin_handle, succeeded=True, updateListing=False, cacheToDisc=True)
 
