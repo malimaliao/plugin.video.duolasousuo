@@ -421,7 +421,8 @@ def API_get_Cloud_Notice():
             api_json = json.loads(cloud_engine_text)
             notice = base64.b64decode(api_json['notice'])
             client = str(api_json['client'])
-            _plugin_dialog.notification(heading=_plugin_name + ' 最新版本: ' + client, message=notice, time=4000)
+            if notice != "":
+                _plugin_dialog.notification(heading=_plugin_name + ' 最新版本: ' + client, message=notice, time=4000)
     except requests.exceptions.RequestException as e:
         print('duola_debug: notice => bad', e)
 
