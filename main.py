@@ -281,7 +281,7 @@ def Web_load_list(url, type_id, page):
         res_json = json.loads(res_text)
         if res_json['code'] == 1:
             if len(res_json['list']) > 0:
-                xbmcplugin.setContent(ADDON_handle, 'tvshows')  # 内容类型
+                xbmcplugin.setContent(ADDON_handle, 'movies')  # 内容类型
                 # 生成列表
                 for video in res_json['list']:
                     vod_id = str(video['vod_id'])
