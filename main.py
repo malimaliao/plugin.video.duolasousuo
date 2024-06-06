@@ -342,8 +342,8 @@ def API_get_Cloud_Engine_new(Cache_save_path):
             # version format: x.x.x
             client = str(xbmcaddon.Addon().getAddonInfo('version'))
             if client != str(api_json['client']):
-                notice += '\n\n当前版本可以升级到新版本，升级需卸载旧版本后才可以安装新版本'
-                notice_title = ADDON_name + '发现新版本: ' + str(api_json['client'])
+                notice = '当前插件可以下载新版本，如果需要升级需卸载旧版本后才可以安装新版本'
+                notice_title = '发现新版本: ' + str(api_json['client'])
             if notice != "":
                 ADDON_dialog.notification(heading=notice_title, message=notice, time=4000)
             if 'expires_in' in api_json:
