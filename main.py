@@ -338,9 +338,14 @@ def API_get_Cloud_Engine_new(Cache_save_path):
         if check_json(cloud_engine_text):
             api_json = json.loads(cloud_engine_text)
             notice = base64.b64decode(api_json['notice'])
-            client = str(api_json['client'])
+            notice_title = ADDON_name
+            # version format: x.x.x
+            client = str(xbmcaddon.Addon().getAddonInfo('version'))
+            if client != str(api_json['client']):
+                notice += '\n\n当前版本可以升级到新版本，升级需卸载旧版本后才可以安装新版本'
+                notice_title = ADDON_name + '发现新版本: ' + str(api_json['client'])
             if notice != "":
-                ADDON_dialog.notification(heading=ADDON_name + ' 最新版本: ' + client, message=notice, time=4000)
+                ADDON_dialog.notification(heading=notice_title, message=notice, time=4000)
             if 'expires_in' in api_json:
                 expires_in = float(api_json['expires_in'])  # 使用服务器限定的有效期
             next_time = datetime.datetime.now() + datetime.timedelta(seconds=expires_in)  # 设定时间有效期在n秒后失效
