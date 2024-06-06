@@ -81,15 +81,15 @@ def Web_load_search(url, keyword):
         if res_json['code'] == 1:
             if len(res_json['list']) > 0:
                 for video in res_json['list']:
-                    vod_id = str(video['vod_id'])
-                    vod_name = video['vod_name']
-                    vod_remarks = video['vod_remarks']
-                    vod_year = str(video['vod_year'])
+                    v_id = str(video['vod_id'])
+                    v_name = video['vod_name']
+                    v_type = video['type_name']
+                    v_remarks = video['vod_remarks']
                     # 建立kodi菜单
-                    list_item = xbmcgui.ListItem(vod_name + ' (' + vod_year + ') [COLOR yellow]' + vod_remarks + '[/COLOR]')
+                    list_item = xbmcgui.ListItem(v_name + ' (' + v_type + ') [COLOR yellow]' + v_remarks + '[/COLOR]')
                     list_item.setArt({'icon': os.path.join(ICONS_dir, 'video.png')})
                     a_url = urllib.parse.quote(url)
-                    xbmcplugin.addDirectoryItem(ADDON_handle, ADDON_address + '?Bot_search_return=' + a_url + '&read_detail=' + vod_id, list_item, True)
+                    xbmcplugin.addDirectoryItem(ADDON_handle, ADDON_address + '?Bot_search_return=' + a_url + '&read_detail=' + v_id, list_item, True)
                 # 退出kodi菜单布局
                 xbmcplugin.endOfDirectory(handle=ADDON_handle, succeeded=True, updateListing=False, cacheToDisc=True)
             else:
