@@ -20,10 +20,10 @@
 		<assets>
 			<icon>logo.png</icon>
 			<fanart>resources/hello.jpg</fanart>
-			<screenshot>resources/1.png</screenshot>
-			<screenshot>resources/2.png</screenshot>
-			<screenshot>resources/3.png</screenshot>
-			<screenshot>resources/4.png</screenshot>
+			<screenshot>resources/1.jpg</screenshot>
+			<screenshot>resources/2.jpg</screenshot>
+			<screenshot>resources/3.jpg</screenshot>
+			<screenshot>resources/4.jpg</screenshot>
         </assets>
 	</extension>
 </addon>
