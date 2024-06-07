@@ -15,18 +15,19 @@ import xbmcplugin
 
 # plugin info
 ADDON_name = '哆啦搜索'
+ADDON_object = xbmcaddon.Addon()
 ADDON_handle = int(sys.argv[1])  # 当前插件句柄
 ADDON_address = sys.argv[0]  # 当前插件地址
 ADDON_parm = sys.argv[2]  # 问号以后的内容
 ADDON_dialog = xbmcgui.Dialog()
-ADDON_PlayerStyle = int(xbmcplugin.getSetting(ADDON_handle, 'Duola_play_style'))
+ADDON_PlayerStyle = int(ADDON_object.getSetting('Duola_play_style'))
 ADDON_PlayerMimes = ['.m3u8', '.mp4', '.flv', '.ts', '.ogg', '.mp3']
 
 # Get addon base path
-ADDON_path = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('path'))
+ADDON_path = xbmcvfs.translatePath(ADDON_object.getAddonInfo('path'))
 ICONS_dir = os.path.join(ADDON_path, 'resources', 'images', 'icons')
 FANART_dir = os.path.join(ADDON_path, 'resources', 'images', 'fanart')
-ADDON_TempDir = os.path.join(xbmcvfs.translatePath('special://home/temp'), xbmcaddon.Addon().getAddonInfo('id'), '')
+ADDON_TempDir = os.path.join(xbmcvfs.translatePath('special://home/temp'), ADDON_object.getAddonInfo('id'), '')
 ADDON_CloudCacheTxt = os.path.join(ADDON_TempDir, 'Duola_Local_Search_Engine.txt')
 
 # Demo api: https://raw.githubusercontent.com/malimaliao/kodi/matrix/api/plugin.video.duolasousuo/v1.json
@@ -342,12 +343,12 @@ def API_get_Cloud_Engine_new(CloudCache_file):
             notice = base64.b64decode(api_json['notice'])
             notice_title = ADDON_name
             # version format: x.x.x
-            client = str(xbmcaddon.Addon().getAddonInfo('version'))
+            client = str(ADDON_object.getAddonInfo('version'))
             if client != str(api_json['client']):
                 notice = '当前插件可以下载新版本，如果需要升级需卸载旧版本后才可以安装新版本'
                 notice_title = '发现新版本: ' + str(api_json['client'])
             if notice != "":
-                ADDON_dialog.notification(heading=notice_title, message=notice, time=4000)
+                ADDON_dialog.notification(heading=notice_title, message=notice, time=4000, sound=False)
             if 'expires_in' in api_json:
                 expires_in = float(api_json['expires_in'])  # 使用服务器限定的有效期
             next_time = datetime.datetime.now() + datetime.timedelta(seconds=expires_in)  # 设定时间有效期在n秒后失效
@@ -423,14 +424,14 @@ def API_get_Cloud_Engine():
 # /
 if ADDON_parm == '':
     print('duola_debug: load main')
-    enable_cloud = xbmcplugin.getSetting(ADDON_handle, 'Duola_Cloud_Search_Engine')
+    enable_cloud = ADDON_object.getSetting('Duola_Cloud_Search_Engine')
     _b = ""
     # add cloud menu
     if enable_cloud == 'true':
         _b = ' (本机内置接口)'
         API_get_Cloud_Engine()
     # add local menu
-    _local_api_url = xbmcplugin.getSetting(ADDON_handle, 'Duola_Local_Search_Engine')
+    _local_api_url = ADDON_object.getSetting('Duola_Local_Search_Engine')
     api_url = urllib.parse.quote(_local_api_url)
     item_engine = xbmcgui.ListItem(ADDON_name + _b)
     item_engine.setArt({'icon': os.path.join(ICONS_dir, 's1.png')})
@@ -519,9 +520,12 @@ if '?Bot_search_return=' in ADDON_parm and '&read_detail' in ADDON_parm:
 
 # /?action=clearCache
 if '?action=clearCache' in ADDON_parm:
-    try:
-        os.rmdir(ADDON_TempDir)
-        ADDON_dialog.notification(heading=ADDON_name, message="清理成功", time=3000)
-    except OSError as e:
-        ADDON_dialog.notification(heading=ADDON_name, message="清理失败", time=3000)
+    print("duola_debug", ADDON_parm)
+    if xbmcvfs.exists(ADDON_TempDir):
+        if xbmcvfs.rmdir(ADDON_TempDir, True):
+            ADDON_dialog.notification(heading=ADDON_name, message="清理成功", time=3000)
+        else:
+            ADDON_dialog.notification(heading=ADDON_name, message="清理失败", time=3000)
+    else:
+        ADDON_dialog.notification(heading=ADDON_name, message="无需清理", time=3000)
 
