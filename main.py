@@ -100,10 +100,20 @@ def Web_load_search(url, keyword):
                 ADDON_dialog.notification(heading=ADDON_name, message='抱歉，找不到相关资源', time=3000)
         else:
             print('duola_debug:无法解析json')
-            ADDON_dialog.notification(heading=ADDON_name, message='抱歉，由于无法解析返回的数据，服务暂时不可用，请稍后重试', time=3000)
+            ADDON_dialog.notification(
+                heading=ADDON_name,
+                message='抱歉，由于无法解析返回的数据，服务暂不可用，请稍后重试',
+                icon=xbmcgui.NOTIFICATION_WARNING,
+                time=3000
+            )
     else:
         print('duola_debug:目标服务器返回的数据无法解析')
-        ADDON_dialog.notification(heading=ADDON_name, message='抱歉，目标服务器返回的数据无法响应，服务暂不可用', time=3000)
+        ADDON_dialog.notification(
+            heading=ADDON_name,
+            message='抱歉，目标服务器返回的数据无法响应，服务暂不可用',
+            icon=xbmcgui.NOTIFICATION_WARNING,
+            time=3000
+        )
 
 
 # request: https://123.com/api/provide/vod/?ac=detail&ids={detail_id}
@@ -116,7 +126,7 @@ def Web_load_detail_one(url, detail_id):
         # print('duola_debug:'+get_url, res.text)
     except requests.exceptions.RequestException as e:
         res_text = ''
-        ADDON_dialog.notification(heading=ADDON_name, message='内容获取失败，暂不可用', time=3000)
+        ADDON_dialog.notification(heading=ADDON_name, message='内容获取失败，暂不可用', icon=xbmcgui.NOTIFICATION_WARNING, time=3000)
         print('duola_debug: Web_load_detail_one => bad', e)
     if check_json(res_text):
         res_json = json.loads(res_text)
@@ -190,8 +200,7 @@ def Web_load_detail_one(url, detail_id):
                     xbmcplugin.endOfDirectory(handle=ADDON_handle, succeeded=True, updateListing=False, cacheToDisc=True)
                 # player_style -------------------------------------------------
                 if ADDON_PlayerStyle == 1:
-                    dialog = xbmcgui.Dialog()
-                    select_i = dialog.select(select_title, V_name_list)
+                    select_i = ADDON_dialog.select(select_title, V_name_list)
                     print('duola_debug: select_i ' + str(select_i))
                     if select_i >= 0:
                         list_item = xbmcgui.ListItem(v_name, v_typename, V_m3u8_list[select_i], offscreen=False)
@@ -203,8 +212,8 @@ def Web_load_detail_one(url, detail_id):
                     xbmcplugin.endOfDirectory(handle=ADDON_handle, succeeded=True, updateListing=False, cacheToDisc=True)
                 # player_style -------------------------------------------------
                 if ADDON_PlayerStyle == 2:
-                    dialog = xbmcgui.Dialog()
-                    select_i = dialog.select(select_title, V_name_list)
+                    # dialog = xbmcgui.Dialog()
+                    select_i = ADDON_dialog.select(select_title, V_name_list)
                     print('duola_debug: select_i ' + str(select_i))
                     if select_i >= 0:
                         list_item = xbmcgui.ListItem(v_name, v_typename, V_m3u8_list[select_i], offscreen=False)
@@ -212,16 +221,26 @@ def Web_load_detail_one(url, detail_id):
                         list_item.setInfo('video', v_infos)
                         xbmc.Player().play(item=playlist, listitem=list_item, windowed=False, startpos=select_i)
                         ADDON_dialog.notification(heading=ADDON_name, message='视频即将播放，请耐心稍候一会', time=6000, sound=False)
-                        xbmcplugin.endOfDirectory(handle=ADDON_handle, succeeded=True, updateListing=False, cacheToDisc=True)
+                    xbmcplugin.endOfDirectory(handle=ADDON_handle, succeeded=True, updateListing=False, cacheToDisc=True)
             else:
                 print('duola_debug:没有数据')
                 ADDON_dialog.notification(heading=ADDON_name, message='抱歉，找不到播放列表', time=3000)
         else:
             print('duola_debug:无法解析json')
-            ADDON_dialog.notification(heading=ADDON_name, message='抱歉，由于无法解析返回的数据，服务暂时不可用，请稍后重试', time=3000)
+            ADDON_dialog.notification(
+                heading=ADDON_name,
+                message='抱歉，由于无法解析返回的数据，服务暂时不可用，请稍后重试',
+                icon=xbmcgui.NOTIFICATION_WARNING,
+                time=3000
+            )
     else:
         print('duola_debug:目标服务器返回的数据无法解析')
-        ADDON_dialog.notification(heading=ADDON_name, message='抱歉，目标服务器返回的数据无法响应，服务暂不可用', time=3000)
+        ADDON_dialog.notification(
+            heading=ADDON_name,
+            message='抱歉，目标服务器返回的数据无法响应，服务暂不可用',
+            icon=xbmcgui.NOTIFICATION_WARNING,
+            time=3000
+        )
 
 
 # request: https://123.com/api/provide/vod/?ac=list
@@ -262,10 +281,20 @@ def Web_load_channels(url):
                 ADDON_dialog.notification(heading=ADDON_name, message='当前引擎暂无栏目', time=3000)
         else:
             print('duola_debug:栏目暂时无法获取')
-            ADDON_dialog.notification(heading=ADDON_name, message='当前引擎栏目暂时无法获取', time=3000)
+            ADDON_dialog.notification(
+                heading=ADDON_name,
+                message='当前引擎栏目暂时无法获取',
+                icon=xbmcgui.NOTIFICATION_WARNING,
+                time=3000
+            )
     else:
         print('duola_debug:无法解析json')
-        ADDON_dialog.notification(heading=ADDON_name, message='无法解析数据，服务暂时不可用，请稍后重试', time=3000)
+        ADDON_dialog.notification(
+            heading=ADDON_name,
+            message='无法解析数据，服务暂时不可用，请稍后重试',
+            icon=xbmcgui.NOTIFICATION_WARNING,
+            time=3000
+        )
 
 
 # request: https://123.com/api/provide/vod/?ac=videolist&t={type_id}&pg={page}
@@ -278,7 +307,7 @@ def Web_load_list(url, type_id, page):
         res_text = res.text
     except requests.exceptions.RequestException as e:
         res_text = ''
-        ADDON_dialog.notification(heading=ADDON_name, message='列表获取失败，暂不可用', time=3000)
+        ADDON_dialog.notification(heading=ADDON_name, message='列表获取失败，暂不可用', icon=xbmcgui.NOTIFICATION_WARNING, time=3000)
         print('duola_debug: Web_load_list => bad', e)
     if check_json(res_text):
         res_json = json.loads(res_text)
@@ -324,10 +353,20 @@ def Web_load_list(url, type_id, page):
                 ADDON_dialog.notification(heading=ADDON_name, message='当前栏目下列表是空的，请稍后重试', time=3000)
         else:
             print('duola_debug:列表暂时无法获取')
-            ADDON_dialog.notification(heading=ADDON_name, message='当前栏目下节目列表暂时无法获取', time=3000)
+            ADDON_dialog.notification(
+                heading=ADDON_name,
+                message='当前栏目下节目列表暂时无法获取',
+                icon=xbmcgui.NOTIFICATION_WARNING,
+                time=3000
+            )
     else:
         print('duola_debug:无法解析json')
-        ADDON_dialog.notification(heading=ADDON_name, message='抱歉，无法解析返回的数据，服务暂时不可用，请稍后重试', time=3000)
+        ADDON_dialog.notification(
+            heading=ADDON_name,
+            message='抱歉，无法解析返回的数据，服务暂时不可用，请稍后重试',
+            icon=xbmcgui.NOTIFICATION_WARNING,
+            time=3000
+        )
 
 
 # API->engine get new
@@ -412,9 +451,19 @@ def API_get_Cloud_Engine():
                         item_cloud.setArt({'icon': os.path.join(ICONS_dir, 's0.png')})
                         xbmcplugin.addDirectoryItem(ADDON_handle, ADDON_address, item_cloud, True)
             else:
-                ADDON_dialog.notification(heading=ADDON_name, message='云端搜索引擎暂时故障,请稍后重试' + api['message'], time=3000)
+                ADDON_dialog.notification(
+                    heading=ADDON_name,
+                    message='云端搜索引擎暂时故障,请稍后重试' + api['message'],
+                    icon=xbmcgui.NOTIFICATION_WARNING,
+                    time=3000
+                )
         else:
-            ADDON_dialog.notification(heading=ADDON_name, message='暂时无法获取云端搜索引擎列表,请稍后重试', time=3000)
+            ADDON_dialog.notification(
+                heading=ADDON_name,
+                message='暂时无法获取云端搜索引擎列表,请稍后重试',
+                icon=xbmcgui.NOTIFICATION_WARNING,
+                time=3000
+            )
         # ----- 解析json ------
     else:
         print('duola_debug: 缓存目录读取失败->' + ADDON_TempDir)
@@ -491,7 +540,7 @@ if '?Bot_channel=' in ADDON_parm and '&channel_id=' in ADDON_parm:
         Web_load_list(engine_url, channel_id, '1')
     else:
         print('duola_debug:传入的 channel_id 地址为空')
-        ADDON_dialog.notification(heading=ADDON_name, message='此栏目无效', time=3000)
+        ADDON_dialog.notification(heading=ADDON_name, message='此栏目无效', icon=xbmcgui.NOTIFICATION_WARNING, time=3000)
 
 # /?Bot_page=https%3A%2F%2F123.com%2Fapi%2Fprovide%2Fvod%2F&channel_id=123&page_id=2
 if '?Bot_page=' in ADDON_parm and '&channel_id=' in ADDON_parm and '&page_id=' in ADDON_parm:
@@ -503,7 +552,7 @@ if '?Bot_page=' in ADDON_parm and '&channel_id=' in ADDON_parm and '&page_id=' i
         Web_load_list(engine_url, channel_id, page_number)
     else:
         print('duola_debug:传入的 channel_id 地址为空')
-        ADDON_dialog.notification(heading=ADDON_name, message='此栏目无效', time=3000)
+        ADDON_dialog.notification(heading=ADDON_name, message='此栏目无效', icon=xbmcgui.NOTIFICATION_WARNING, time=3000)
 
 # /?Bot_search_return=https%3A%2F%2F123.com%2Fapi%2Fprovide%2Fvod%2F&read_detail=123
 if '?Bot_search_return=' in ADDON_parm and '&read_detail' in ADDON_parm:
@@ -515,7 +564,7 @@ if '?Bot_search_return=' in ADDON_parm and '&read_detail' in ADDON_parm:
         Web_load_detail_one(engine_url, detail_id)
     else:
         print('duola_debug:传入的 read_detail 地址为空')
-        ADDON_dialog.notification(heading=ADDON_name, message='此视频信息无效', time=3000)
+        ADDON_dialog.notification(heading=ADDON_name, message='此视频无效', icon=xbmcgui.NOTIFICATION_WARNING, time=3000)
 
 
 # /?action=clearCache
@@ -525,7 +574,7 @@ if '?action=clearCache' in ADDON_parm:
         if xbmcvfs.rmdir(ADDON_TempDir, True):
             ADDON_dialog.notification(heading=ADDON_name, message="清理成功", time=3000)
         else:
-            ADDON_dialog.notification(heading=ADDON_name, message="清理失败", time=3000)
+            ADDON_dialog.notification(heading=ADDON_name, message="清理失败", icon=xbmcgui.NOTIFICATION_WARNING, time=3000)
     else:
         ADDON_dialog.notification(heading=ADDON_name, message="无需清理", time=3000)
 
