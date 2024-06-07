@@ -26,7 +26,7 @@
 
 請您Google下面这些关键词，并寻找这些第三方站点中的json api接口。資源站json接口通常非常类似，
 例如我们找到了他们的json接口是这样举例的：https://api.123.com/api.php/provide/vod/?ac=list
-那么其实它的接口就是：https://api.123.com/api.php/provide/vod/
+那么其实它的接口就是：<u>https://api.123.com/api.php/provide/vod/</u>
 
 其中问好后面的都是参数，例如?ac=list是一个参数。
 
