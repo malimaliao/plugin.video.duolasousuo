@@ -19,6 +19,37 @@
 
 爲了方便测试练习，插件默認的雲端引擎并沒有開啓，開啓后它將支持獲取基於github上搜索引擎接口列表，使插件擁有更多的搜索渠道。
 
+>  云端引擎的接口数据格式如下（即：代碼中[ADDON_api]變量對應返回的内容）：
+
+```json
+
+{
+  "code": 1, // API状态：1为可用
+  "message": "success", // API状态描述
+  "expires_in": 3600, // API有效期：单位为秒
+  "readme": "hello", // API简介：[1.7]版本起开始弃用!
+  "notice": "5qyi6L+O5YWJ5Li05Li76aG177yaaHR0cHM6Ly9tYWxpbWFsaWFvLmdpdGh1Yi5pby9rb2RpLw==", // API通知消息：要求内容采用base64编码
+  "client": "1.7.0", // 版本号
+  "data": {
+    "time": "2024-06-07 17:09:02", // 数据更新时间
+    "note": "", // 数据更新备注
+    "list": [ // 数据源列表
+      {
+        "name": "1.飞速资源", // 数据源名称
+        "status": 1, // 数据源状态：1为可用
+        "api_url": "aHR0cHM6Ly93d3cuZmVpc3V6eWFwaS5jb20vYXBpLnBocC9wcm92aWRlL3ZvZC8=" // 数据源接口地址：要求内容采用base64编码
+      },
+      {
+        "name": "2.无极网络", // 数据源名称
+        "status": 1, // 数据源状态：1为可用
+        "api_url": "aHR0cHM6Ly9hcGkud3VqaW5hcGkubWUvYXBpLnBocC9wcm92aWRlL3ZvZC8=" // 数据源接口地址：要求内容采用base64编码
+      }
+    ]
+  }
+}
+
+```
+
 
 ### 什麽是資源站數據接口？
 
