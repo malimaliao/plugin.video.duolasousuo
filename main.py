@@ -26,6 +26,8 @@ ADDON_PlayerMimes = ['.m3u8', '.mp4', '.flv', '.ts', '.ogg', '.mp3']
 ADDON_path = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('path'))
 ICONS_dir = os.path.join(ADDON_path, 'resources', 'images', 'icons')
 FANART_dir = os.path.join(ADDON_path, 'resources', 'images', 'fanart')
+ADDON_TempDir = os.path.join(xbmcvfs.translatePath('special://home/temp'), xbmcaddon.Addon().getAddonInfo('id'), '')
+ADDON_CloudCacheTxt = os.path.join(ADDON_TempDir, 'Duola_Local_Search_Engine.txt')
 
 # Demo api: https://raw.githubusercontent.com/malimaliao/kodi/matrix/api/plugin.video.duolasousuo/v1.json
 ADDON_api = 'https://gitee.com/beijifeng/kodi/raw/matrix/api/plugin.video.duolasousuo/v1.json'
@@ -328,7 +330,7 @@ def Web_load_list(url, type_id, page):
 
 
 # API->engine get new
-def API_get_Cloud_Engine_new(Cache_save_path):
+def API_get_Cloud_Engine_new(CloudCache_file):
     print('duola_debug: API_get_Cloud_Engine_new', ADDON_api)
     try:
         res = requests.get(url=ADDON_api, headers=UA_head, timeout=UA_timeout)
@@ -350,7 +352,7 @@ def API_get_Cloud_Engine_new(Cache_save_path):
                 expires_in = float(api_json['expires_in'])  # 使用服务器限定的有效期
             next_time = datetime.datetime.now() + datetime.timedelta(seconds=expires_in)  # 设定时间有效期在n秒后失效
             next_timestamp = str(int(next_time.timestamp()))
-            with xbmcvfs.File(Cache_save_path, 'w') as f:
+            with xbmcvfs.File(CloudCache_file, 'w') as f:
                 time_value = 'next_timestamp=' + next_timestamp  # 有效时间
                 f.write(time_value)  # time
                 f.write('\n--------\n')  # 此处分隔符
@@ -364,17 +366,12 @@ def API_get_Cloud_Engine_new(Cache_save_path):
 # API->engine get
 def API_get_Cloud_Engine():
     print('duola_debug: API_get_Cloud_Engine')
-    temp_path = xbmcvfs.translatePath('special://home/temp')
-    my_addon = xbmcaddon.Addon()
-    my_addon_id = my_addon.getAddonInfo('id')
-    my_cache_path = os.path.join(temp_path, my_addon_id, '')
-    xbmcvfs.mkdirs(my_cache_path)
-    if xbmcvfs.exists(my_cache_path):
-        print('duola_debug: Cache directory read successfully ->' + my_cache_path)
-        my_cloud_engine_cache = os.path.join(my_cache_path, 'Duola_Local_Search_Engine.txt')
-        if xbmcvfs.exists(my_cloud_engine_cache):
+    xbmcvfs.mkdirs(ADDON_TempDir)
+    if xbmcvfs.exists(ADDON_TempDir):
+        print('duola_debug: Cache directory read successfully ->' + ADDON_TempDir)
+        if xbmcvfs.exists(ADDON_CloudCacheTxt):
             cloud_engine_text = ""
-            with xbmcvfs.File(my_cloud_engine_cache) as f:
+            with xbmcvfs.File(ADDON_CloudCacheTxt) as f:
                 cache = f.read()
                 a = cache.split('--------')
                 a101 = a[1]  # json text
@@ -385,14 +382,14 @@ def API_get_Cloud_Engine():
                 this_timestamp = int(datetime.datetime.now().timestamp())
                 print('this_time:' + str(this_timestamp) + ',next_time:' + str(next_timestamp), cloud_engine_text)
                 if this_timestamp < next_timestamp:
-                    print('duola_debug: effective cache, read local ->' + my_cloud_engine_cache)
+                    print('duola_debug: effective cache, read local ->' + ADDON_CloudCacheTxt)
                     cloud_engine_text = a101
                 else:
                     print('duola_debug: cache invalidation, download again')
-                    cloud_engine_text = API_get_Cloud_Engine_new(my_cloud_engine_cache)
+                    cloud_engine_text = API_get_Cloud_Engine_new(ADDON_CloudCacheTxt)
         else:
             print('duola_debug: First cloud download of data')
-            cloud_engine_text = API_get_Cloud_Engine_new(my_cloud_engine_cache)
+            cloud_engine_text = API_get_Cloud_Engine_new(ADDON_CloudCacheTxt)
         # ----- 解析json ------
         if check_json(cloud_engine_text):
             api = json.loads(cloud_engine_text)
@@ -405,12 +402,12 @@ def API_get_Cloud_Engine():
                     if zy['status'] == 1:
                         _api_url = urllib.parse.quote(base64.b64decode(zy['api_url']))  # base64 解码后，再URL编码
                         _api_title = ' [COLOR blue] (' + zy['name'] + ') [/COLOR]'
-                        item_cloud = xbmcgui.ListItem('哆啦搜索' + _api_title)
+                        item_cloud = xbmcgui.ListItem(ADDON_name + _api_title)
                         item_cloud.setArt({'icon': os.path.join(ICONS_dir, 's2.png')})
                         xbmcplugin.addDirectoryItem(ADDON_handle, ADDON_address + '?Bot_engine=' + _api_url, item_cloud, True)
                     else:
                         _api_title = ' [COLOR yellow] (' + zy['name'] + ') ' + ' 暂不可用[/COLOR]'
-                        item_cloud = xbmcgui.ListItem('哆啦搜索' + _api_title)
+                        item_cloud = xbmcgui.ListItem(ADDON_name + _api_title)
                         item_cloud.setArt({'icon': os.path.join(ICONS_dir, 's0.png')})
                         xbmcplugin.addDirectoryItem(ADDON_handle, ADDON_address, item_cloud, True)
             else:
@@ -419,8 +416,8 @@ def API_get_Cloud_Engine():
             ADDON_dialog.notification(heading=ADDON_name, message='暂时无法获取云端搜索引擎列表,请稍后重试', time=3000)
         # ----- 解析json ------
     else:
-        print('duola_debug: 缓存目录读取失败->' + my_cache_path)
-        ADDON_dialog.ok(ADDON_name, '抱歉，由于缓存无法读写，因此云端引擎不可用。文件地址：' + my_cache_path)
+        print('duola_debug: 缓存目录读取失败->' + ADDON_TempDir)
+        ADDON_dialog.ok(ADDON_name, '抱歉，由于缓存无法读写导致服务不可用。目录：' + ADDON_TempDir)
 
 
 # /
@@ -435,7 +432,7 @@ if ADDON_parm == '':
     # add local menu
     _local_api_url = xbmcplugin.getSetting(ADDON_handle, 'Duola_Local_Search_Engine')
     api_url = urllib.parse.quote(_local_api_url)
-    item_engine = xbmcgui.ListItem('哆啦搜索' + _b)
+    item_engine = xbmcgui.ListItem(ADDON_name + _b)
     item_engine.setArt({'icon': os.path.join(ICONS_dir, 's1.png')})
     xbmcplugin.addDirectoryItem(ADDON_handle, ADDON_address + '?Bot_engine=' + api_url, item_engine, True)
     # add help menu
@@ -514,7 +511,17 @@ if '?Bot_search_return=' in ADDON_parm and '&read_detail' in ADDON_parm:
     engine_url = _parm_url.replace('&read_detail=' + detail_id, '').split("Bot_search_return=")[1]
     print('duola_debug', engine_url, detail_id)
     if detail_id != "":
-        this_list = Web_load_detail_one(engine_url, detail_id)
+        Web_load_detail_one(engine_url, detail_id)
     else:
         print('duola_debug:传入的 read_detail 地址为空')
         ADDON_dialog.notification(heading=ADDON_name, message='此视频信息无效', time=3000)
+
+
+# /?action=clearCache
+if '?action=clearCache' in ADDON_parm:
+    try:
+        os.rmdir(ADDON_TempDir)
+        ADDON_dialog.notification(heading=ADDON_name, message="清理成功", time=3000)
+    except OSError as e:
+        ADDON_dialog.notification(heading=ADDON_name, message="清理失败", time=3000)
+

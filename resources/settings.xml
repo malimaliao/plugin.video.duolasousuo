@@ -5,5 +5,6 @@
 		<setting label="30102" type="lsep"/>
         <setting id="Duola_Cloud_Search_Engine" type="bool" label="30103" default="false"/>
 		<setting id="Duola_Local_Search_Engine" type="text" label="30104" default="https://api.wujinapi.com/api.php/provide/vod/" />
+		<setting id="Duola_Clear_cache" type="action" label="30105" action="RunPlugin(plugin://plugin.video.duolasousuo/?action=clearCache)"/>
 	</category>
 </settings>
